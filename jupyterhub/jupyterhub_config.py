@@ -36,11 +36,19 @@ postgres_port = os.environ.get('POSTGRES_PORT') or '5432'
 postgres_db = os.environ.get('POSTGRES_DB') or 'jupyterhub'
 c.JupyterHub.db_url = f'postgres://{postgres_user}:{postgres_password}/{postgres_host}:{postgres_port}/{postgres_db}'
 
+# JupyterHub Postgres connection URI
+postgres_user = os.environ.get('POSTGRES_USER') or 'jupyterhub'
+postgres_password = os.environ.get('POSTGRES_PASSWORD') or 'jupyterhub'
+postgres_host = os.environ.get('POSTGRES_HOST') or 'postgres'
+postgres_port = os.environ.get('POSTGRES_PORT') or '5432'
+postgres_db = os.environ.get('POSTGRES_DB') or 'jupyterhub'
+c.JupyterHub.db_url = f'postgres://{postgres_user}:{postgres_password}/{postgres_host}:{postgres_port}/{postgres_db}'
+
 # Set the authenticator
 c.JupyterHub.authenticator_class = GenericOAuthenticator
 
 c.Authenticator.admin_users = {'admin'}
-c.Authenticator.auto_login = False
+c.Authenticator.auto_login = True
 c.Authenticator.allowed_users = {'greg', 'abhi', 'greg@example.com'}
 
 # Verify TLS certificates.
@@ -61,7 +69,7 @@ c.OAuthenticator.enable_auth_state = True
 c.GenericOAuthenticator.login_service = os.environ.get('GENERICAUTH_LOGIN_SERVICE_NAME') or 'Keycloak'
 # TODO: clarify scopes
 c.GenericOAuthenticator.scope = ['openid']
-c.GenericOAuthenticator.userdata_url = os.environ.get('OAUTH2_USERDATA_URL') or 'http://127.0.0.1/auth/realms/illumidesk-realm/protocol/openid-connect/userinfo'
+c.GenericOAuthenticator.userdata_url = os.environ.get('OAUTH2_USERDATA_URL') or 'http://localhost:8080/auth/realms/illumidesk-realm/protocol/openid-connect/userinfo'
 c.GenericOAuthenticator.userdata_method = os.environ.get('GENERICAUTH_USERDATA_METHOD') or 'GET'
 c.GenericOAuthenticator.userdata_params = { 'state': 'state' }
 c.GenericOAuthenticator.username_key = os.environ.get('OAUTH2_USERNAME_KEY') or 'preferred_username'
