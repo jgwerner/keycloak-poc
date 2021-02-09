@@ -21,17 +21,27 @@
 
 #### 2. Create Keycloak Realm Client
 
+**General Settings**
+
 1. Click on `Home` --> `Configure` --> `Clients` --> `Create`. The `Create` button is on the top right hand portion of the page.
 2. Enter `Client ID`, such as `illumidesk-hub`
 3. Ensure the `Enabled` option is toggled to `ON`.
 4. (Optional) Add `Name` and `Description`.
 5. Ensure the `Client Protocol` option is set to `openid-connect` (default).
-6. Ensure the `Access Type` option is set to `public` (default).
+6. Ensure the `Access Type` option is set to `credentials` (`public` is default).
 7. Ensure `Standard Flow Enabled` is toggled to `ON`.
 8. Ensure `Direct Access Grants Enabled` is toggled to `ON`.
 9. For `Root URL` enter `http://localhost:8000`.
 10. For `Base URL` enter `/`.
 11. For `Web Origins` enter `*` (any origin).
+
+**Credentials**
+
+1. Click on the `Credentials` tab
+2. For `Client Authenticator` select the `Client ID and Secret` option from the drop down.
+3. Copy the `Secret` value from the read-only field.
+4. Past the `Secret` value mentioned above and paste so that it's assigned to the `OAUTH_CLIENT_SECRET` environment variable in your `.env` file.
+5. 
 
 #### 3. Create External SAML v2.0 Identity Provider
 
