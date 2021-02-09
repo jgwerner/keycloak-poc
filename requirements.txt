@@ -1,1 +1,2 @@
 python-dotenv==0.15.0
+oauthenticator==0.13.0
