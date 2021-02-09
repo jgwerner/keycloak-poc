@@ -52,10 +52,8 @@ c.GenericOAuthenticator.login_service = os.environ.get('GENERICAUTH_LOGIN_SERVIC
 # c.KeycloakAuthenticator.scope = ['email', 'read_api', 'read_user', 'openid', 'profile']
 c.GenericOAuthenticator.userdata_url = os.environ.get('GENERICAUTH_USERDATA_URL') or 'http://localhost:8080/auth/realms/illumidesk-realm/protocol/openid-connect/userinfo'
 c.GenericOAuthenticator.userdata_method = os.environ.get('GENERICAUTH_USERDATA_METHOD') or 'GET'
-userdata_params = {
-    os.environ.get('GENERICAUTH_USERNAME_PARAMS_KEY') or 'state' : os.environ.get('GENERICAUTH_USERNAME_PARAMS_VALUE') or 'state' }
-c.GenericOAuthenticator.userdata_params = userdata_params
-c.GenericOAuthenticator.username_key = os.environ.get('GENERICAUTH_USERNAME_KEY') or 'sub'
+c.GenericOAuthenticator.userdata_params = { 'state': 'state' }
+c.GenericOAuthenticator.username_key = os.environ.get('GENERICAUTH_USERNAME_KEY') or 'preferred_username'
 
 # Set Keycloak logout url
-c.GenericOAuthenticator.keycloak_logout_url = os.environ.get('KEYCLOAK_LOGOUT_URL') or 'http://localhost:8080/auth/realms/illumidesk-realm/protocol/openid-connect/logout'
+#c.GenericOAuthenticator.keycloak_logout_url = os.environ.get('KEYCLOAK_LOGOUT_URL') or 'http://localhost:8080/auth/realms/illumidesk-realm/protocol/openid-connect/logout'
