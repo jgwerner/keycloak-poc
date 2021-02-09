@@ -1,7 +1,8 @@
 version: '3'
 
 volumes:
-  pg-data:
+  pg-data-kc:
+  pg-data-hub:
 
 services:
   keycloak:
@@ -10,13 +11,21 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
       DB_VENDOR: POSTGRES
-      DB_ADDR: postgres
+      DB_ADDR: postgres-kc
       DB_DATABASE: keycloak
       DB_USER: keycloak
       DB_PASSWORD: password
       DB_SCHEMA: public
     ports:
       - 8080:8080
+  postgres-kc:
+    image: postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    volumes:
+      - pg-data-kc:/var/lib/postgresql/data
   jupyterhub:
     image: illumidesk/jupyterhub:k8s
     build: .
@@ -28,11 +37,11 @@ services:
       - 8000:8000
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
-  postgres:
+  postgres-hub:
     image: postgres
-    volumes:
-      - pg-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
+      POSTGRES_DB: jupyterhub
+      POSTGRES_USER: jupyterhub
       POSTGRES_PASSWORD: password
+    volumes:
+       - pg-data-hub:/var/lib/postgresql/data
