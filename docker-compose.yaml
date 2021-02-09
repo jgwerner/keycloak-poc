@@ -14,12 +14,14 @@ services:
       DB_DATABASE: keycloak
       DB_USER: keycloak
       DB_PASSWORD: password
-      DB_SCHEMA: public
+      DB_SCHEMA: keycloak
     ports:
       - 8080:8080
   jupyterhub:
     image: illumidesk/jupyterhub:k8s
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyterhub
     env_file:
       - .env
     command: >
@@ -29,7 +31,10 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
   postgres:
-    image: postgres
+    image: illumidesk/postgres:k8s
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     volumes:
       - pg-data:/var/lib/postgresql/data
     environment:
