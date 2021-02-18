@@ -10,12 +10,13 @@ services:
     container_name: nginx
     restart: on-failure
     ports:
-      - "8080:8080"
+      - "80:80"
   keycloak:
     build: keycloak/.
     container_name: keycloak
     restart: on-failure
     environment:
+      #KEYCLOAK_FRONTEND_URL: http://localhost/keylocak/
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
       DB_VENDOR: POSTGRES
@@ -24,6 +25,9 @@ services:
       DB_USER: keycloak
       DB_PASSWORD: password
       DB_SCHEMA: public
+      PROXY_ADDRESS_FORWARDING: "true"
+    ports:
+      - 8080:8080
   postgres-kc:
     image: postgres
     environment:
@@ -40,8 +44,6 @@ services:
       - .env
     command: >
       jupyterhub -f /srv/jupyterhub/jupyterhub_config.py
-    ports:
-      - 8000:8000
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:rw"
   postgres-hub:
