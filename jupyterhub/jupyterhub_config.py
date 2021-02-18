@@ -27,11 +27,13 @@ c.JupyterHub.allow_origin = '*'
 
 # JupyterHub Postgres connection URI
 postgres_user = os.environ.get('POSTGRES_USER') or 'jupyterhub'
-postgres_password = os.environ.get('POSTGRES_PASSWORD') or 'jupyterhub'
-postgres_host = os.environ.get('POSTGRES_HOST') or 'postgres'
+postgres_password = os.environ.get('POSTGRES_PASSWORD') or 'password'
+postgres_host = os.environ.get('POSTGRES_HOST') or 'postgres-hub'
 postgres_port = os.environ.get('POSTGRES_PORT') or '5432'
 postgres_db = os.environ.get('POSTGRES_DB') or 'jupyterhub'
-c.JupyterHub.db_url = f'postgres://{postgres_user}:{postgres_password}/{postgres_host}:{postgres_port}/{postgres_db}'
+c.JupyterHub.db_url = 'postgresql://{}:{}@{}:5432/{}'.format(
+    postgres_user, postgres_password, postgres_host, postgres_db
+)
 
 # Set the authenticator
 c.JupyterHub.authenticator_class = GenericOAuthenticator

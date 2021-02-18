@@ -5,9 +5,23 @@
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Dev Setup
+## Build and Start
 
-#### 1. Create and Configure Keycloak Realm
+1. Build:
+
+```bash
+docker-compose build --no-cache
+```
+
+2. Start:
+
+```bash
+docker-compose up -d
+```
+
+## Dev Setup
+
+### 1. Create and Configure Keycloak Realm
 
 1. Log into admin portal at [http://localhost:8080/auth]([http://localhost:8080/auth)
 2. Create new realm by navigating to `Home --> Realm Drop Down (top left) --> Create New Realm`.
@@ -19,7 +33,7 @@
 8. Select the `none` setting for `Require SSL`.
 9. Click on `Save`
 
-#### 2. Create Keycloak Realm Client
+### 2. Create Keycloak Realm Client
 
 1. Click on `Home` --> `Configure` --> `Clients` --> `Create`. The `Create` button is on the top right hand portion of the page.
 2. Enter `Client ID`, such as `illumidesk-hub`
@@ -33,7 +47,7 @@
 10. For `Base URL` enter `/`.
 11. For `Web Origins` enter `*` (any origin).
 
-#### 3. Create External SAML v2.0 Identity Provider
+### 3. Create External SAML v2.0 Identity Provider
 
 Instructions to set up a SAML v2.0 Identity Provider (IdP) vary depending on the vendor. Below is a list of the vendors we have tested this setup with.
 
@@ -64,7 +78,7 @@ http://localhost:8080/auth/realms/illumidesk-realm/broker/saml/endpoint
 
 > **Note**: the `Application Callback URL` from section `11.2` is also known as the `Assertion Consumer Service URL`, the `Post-back URL`, or `Callback URL`.
 
-#### 4. Create Keycloak Realm Identity Provider with SAML v2.0
+### 4. Create Keycloak Realm Identity Provider with SAML v2.0
 
 1. Click on `Home` --> `Configure` --> `Identity Providers`
 2. Create a new SAML v2.0 provider by selecting the `User-defined` --> `SAML v2.0`
@@ -81,19 +95,13 @@ http://localhost:8080/auth/realms/illumidesk-realm/broker/saml/endpoint
 13. Add a reasonable clock skew tolerance window in the `Allowed clock skew` field, such as `60`.
 14. Click on `Save` at the bottom of the page.
 
-#### 5. Configure JupyterHub
+### 5. Configure JupyterHub
 
 1. Copy the `env.example` file and create a `.env` file.
-3. Update the `.env` file with your values:
+2. Update the `.env` file with your values:
    1. `JUPYTERHUB_HOST`: the external facing JupyterHub host URL, such as `http://localhost:8000`.
    2. `KEYCLOAK_INTERNAL_HOST`: the internal Keycloak service scheme, name and port. For example: `http://keycloak:8080`.
    3. `KEYCLOAK_EXTERNAL_HOST`: the external Keycloak scheme, host, and port. This is the endpoint that For example:  `http://localhost:8080`.
    4. `KEYCLOAK_REALM`: the Keycloak Realm name, such as `illumidesk`.
    5. `OAUTH_CLIENT_ID`: the name of the Keycloak client configured with the Keycloak Realm in **Section 4** above, such as `illumidesk-hub`.
    6. `JUPYTERHUB_CRYPT_KEY`: the JupyterHub crytographic key used to encrypt the `auth_state` when the authentication dictionary is persisted from the Authenticator to the Spawner using the `JupyterHub.auth_state_enabled = True` setting. Create a secure random string with the `openssl rand -hex 32` command from your preferred terminal. If you don't have access to the `openssl` command, any random value should suffice. **However, please change before configuring the environment for Production!**
-
-### Start Environment
-
-```bash
-docker-compose up -d
-```

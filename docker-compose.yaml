@@ -5,8 +5,16 @@ volumes:
   pg-data-hub:
 
 services:
+  nginx:
+    build: nginx/.
+    container_name: nginx
+    restart: on-failure
+    ports:
+      - "8080:8080"
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
+    build: keycloak/.
+    container_name: keycloak
+    restart: on-failure
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
@@ -16,8 +24,6 @@ services:
       DB_USER: keycloak
       DB_PASSWORD: password
       DB_SCHEMA: public
-    ports:
-      - 8080:8080
   postgres-kc:
     image: postgres
     environment:
@@ -27,8 +33,9 @@ services:
     volumes:
       - pg-data-kc:/var/lib/postgresql/data
   jupyterhub:
-    image: illumidesk/jupyterhub:k8s
-    build: .
+    build: jupyterhub/.
+    container_name: jupyterhub
+    restart: on-failure
     env_file:
       - .env
     command: >
