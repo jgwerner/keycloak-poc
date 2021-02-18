@@ -35,12 +35,14 @@ docker-compose up -d
 
 ### 2. Create Keycloak Realm Client
 
+**General Settings**
+
 1. Click on `Home` --> `Configure` --> `Clients` --> `Create`. The `Create` button is on the top right hand portion of the page.
 2. Enter `Client ID`, such as `illumidesk-hub`
 3. Ensure the `Enabled` option is toggled to `ON`.
 4. (Optional) Add `Name` and `Description`.
 5. Ensure the `Client Protocol` option is set to `openid-connect` (default).
-6. Ensure the `Access Type` option is set to `public` (default).
+6. Ensure the `Access Type` option is set to `credentials` (`public` is default).
 7. Ensure `Standard Flow Enabled` is toggled to `ON`.
 8. Ensure `Direct Access Grants Enabled` is toggled to `ON`.
 9. For `Root URL` enter `http://localhost:8000`.
