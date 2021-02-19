@@ -1,33 +1,71 @@
 # IllumiDesk with SAML v2.0
 
+- Auth0 set up as SAML Identity Provider (IdP)
+- Ngrok used to tunnel local ports to https://random-sub-domain.ngrok.io
+- Keycloak for OIDC and configuration of SAML Service Provider (SP) client
+- Ngnix
+- JupyterHub
+  - GenericOAuthenticator
+  - DockerSpawner
+
 ## Requirements
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
+- [Auth0](https://auth0.com) (Supports free trials)
+- [Ngrok](https://ngrok.io/downloads) (Free for basic version)
 
-## Build and Start
+## Overview
+
+This setup has two versions of Docker Compose:
+
+- Dev (`docker-compose-dev.yaml`)
+  - Mounts `nginx` and `jupyterhub` configuration files from the local file system
+  - Builds the docker images from Dockerfiles located in sub-directories.
+
+- Default (`docker-compose.yaml`)
+  - Pulls images located in DockerHub registry
+
+Use the dev version to quickly test different configuration options. Use the default version to launch services with a sensible set of defaults.
+
+### Quick Start
+
+1. Copy `.env.example` to `.env`
+2. Update values in `.env`. Sensible defaults are provided to enable basic launches.
+3. Start:
+
+```bash
+docker-compose up -d`
+```
+### Dev Setup
 
 1. Build:
 
 ```bash
-docker-compose build --no-cache
+docker-compose build --no-cache -f docker-compose-dev.yaml
 ```
 
 2. Start:
 
 ```bash
-docker-compose up -d
+docker-compose up -d -f docker-compose-dev.yaml
 ```
 
-3. (Optional)
+3. (Optional) Edit configuration files and restart service (container)
 
-Edit the `nginx/nginx.conf` configuration file to update Nginx's configuration. Then restart the `nginx` container with:
+- Edit the `nginx/nginx.conf` configuration file to update Nginx's configuration. Then restart the `nginx` container with:
 
 ```bash
-docker-compose restart nginx
+docker-compose restart nginx -f docker-compose-dev.yaml
 ```
 
-## Dev Setup
+- Edit the `jupyterhub/jupyterhub_config.py` configuration file to update JupyterHub's configuration. Then restart the `jupyterhub` container with:
+
+```bash
+docker-compose restart jupyterhub -f docker-compose-dev.yaml
+```
+
+## Public Access with Ngrok
 
 ### 1. Create and Configure Keycloak Realm
 
