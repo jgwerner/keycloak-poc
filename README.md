@@ -28,6 +28,7 @@ This setup has two versions of Docker Compose:
 
 Use the dev version to quickly test different configuration options. Use the default version to launch services with a sensible set of defaults.
 
+## Build, Launch, Test
 ### Quick Start
 
 1. Copy `.env.example` to `.env`
@@ -65,9 +66,34 @@ docker-compose restart nginx -f docker-compose-dev.yaml
 docker-compose restart jupyterhub -f docker-compose-dev.yaml
 ```
 
-## Public Access with Ngrok
+### Public Access with Ngrok
 
-### 1. Create and Configure Keycloak Realm
+Once you have downloaded ngrok, start a tunnel with:
+
+```bash
+ngrok http 80
+```
+
+If successful, the command should output something similar to:
+
+```bash
+ngrok by @inconshreveable                                                                                                 (Ctrl+C to quit)
+                                                                                                                                          
+Session Status                online                                                                                                      
+Session Expires               1 hour, 59 minutes                                                                                          
+Version                       2.3.35                                                                                                      
+Region                        United States (us)                                                                                          
+Web Interface                 http://127.0.0.1:4040                                                                                       
+Forwarding                    http://d92b6df0a587.ngrok.io -> http://localhost:80                                                         
+Forwarding                    https://d92b6df0a587.ngrok.io -> http://localhost:80                                                        
+                                                                                                                                          
+Connections                   ttl     opn     rt1     rt5     p50     p90                                                                 
+                              0       0       0.00    0.00    0.00    0.00  
+```
+
+Copy the forwarding address or open a new Terminal tab to continue with the steps below.
+
+### Create and Configure Keycloak Realm
 
 > **NOTE**: a working local test should use TSL termination. You can emulate TSL termination by using a third party service such as [`ngrok`](https://ngrok.com/download) to publish local ports to a publicly accesible domain with `https://...`.
 
@@ -82,7 +108,7 @@ docker-compose restart jupyterhub -f docker-compose-dev.yaml
 8. Select the `none` setting for `Require SSL`.
 9. Click on `Save`
 
-### 2. Create Keycloak Realm Client
+### Create Keycloak Realm Client
 
 **General Settings**
 
@@ -98,7 +124,7 @@ docker-compose restart jupyterhub -f docker-compose-dev.yaml
 10. For `Base URL` enter `/`.
 11. For `Web Origins` enter `*` (any origin).
 
-### 3. Create External SAML v2.0 Identity Provider
+### Create External SAML v2.0 Identity Provider
 
 Instructions to set up a SAML v2.0 Identity Provider (IdP) vary depending on the vendor. Below is a list of the vendors we have tested this setup with.
 
@@ -129,7 +155,7 @@ http://127.0.0.1:8080/keycloak/auth/realms/illumidesk-realm/broker/saml/endpoint
 
 > **Note**: the `Application Callback URL` from section `11.2` is also known as the `Assertion Consumer Service URL`, the `Post-back URL`, or `Callback URL`.
 
-### 4. Create Keycloak Realm Identity Provider with SAML v2.0
+### Create Keycloak Realm Identity Provider with SAML v2.0
 
 1. Click on `Home` --> `Configure` --> `Identity Providers`
 2. Create a new SAML v2.0 provider by selecting the `User-defined` --> `SAML v2.0`
@@ -156,3 +182,7 @@ http://127.0.0.1:8080/keycloak/auth/realms/illumidesk-realm/broker/saml/endpoint
    4. `KEYCLOAK_REALM`: the Keycloak Realm name, such as `illumidesk`.
    5. `OAUTH_CLIENT_ID`: the name of the Keycloak client configured with the Keycloak Realm in **Section 4** above, such as `illumidesk-hub`.
    6. `JUPYTERHUB_CRYPT_KEY`: the JupyterHub crytographic key used to encrypt the `auth_state` when the authentication dictionary is persisted from the Authenticator to the Spawner using the `JupyterHub.auth_state_enabled = True` setting. Create a secure random string with the `openssl rand -hex 32` command from your preferred terminal. If you don't have access to the `openssl` command, any random value should suffice. **However, please change before configuring the environment for Production!**
+
+## License
+
+MIT
