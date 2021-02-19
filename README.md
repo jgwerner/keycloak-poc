@@ -19,6 +19,14 @@ docker-compose build --no-cache
 docker-compose up -d
 ```
 
+3. (Optional)
+
+Edit the `nginx/nginx.conf` configuration file to update Nginx's configuration. Then restart the `nginx` container with:
+
+```bash
+docker-compose restart nginx
+```
+
 ## Dev Setup
 
 ### 1. Create and Configure Keycloak Realm
