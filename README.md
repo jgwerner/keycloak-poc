@@ -43,13 +43,13 @@ docker-compose up -d`
 1. Build:
 
 ```bash
-docker-compose build --no-cache -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml build --no-cache
 ```
 
 2. Start:
 
 ```bash
-docker-compose up -d -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml up -d
 ```
 
 3. (Optional) Edit configuration files and restart service (container)
@@ -57,13 +57,13 @@ docker-compose up -d -f docker-compose-dev.yaml
 - Edit the `nginx/nginx.conf` configuration file to update Nginx's configuration. Then restart the `nginx` container with:
 
 ```bash
-docker-compose restart nginx -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml restart nginx
 ```
 
 - Edit the `jupyterhub/jupyterhub_config.py` configuration file to update JupyterHub's configuration. Then restart the `jupyterhub` container with:
 
 ```bash
-docker-compose restart jupyterhub -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml restart jupyterhub
 ```
 
 ### Public Access with Ngrok
