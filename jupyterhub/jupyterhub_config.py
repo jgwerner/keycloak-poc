@@ -37,6 +37,7 @@ c.JupyterHub.db_url = 'postgresql://{postgres_user}:{postgres_password}@{postgre
     postgres_db = os.environ.get('POSTGRES_DB') or 'jupyterhub',
 )
 
+
 # Set the authenticator
 c.JupyterHub.authenticator_class = GenericOAuthenticator
 
