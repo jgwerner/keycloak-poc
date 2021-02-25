@@ -1,21 +1,27 @@
-# IllumiDesk with SAML v2.0
+# POC - IllumiDesk with SAML v2.0
 
-- Auth0 set up as SAML Identity Provider (IdP)
-- Ngrok used to tunnel local ports to https://random-sub-domain.ngrok.io
-- Keycloak for OIDC and configuration of SAML Service Provider (SP) client
-- Ngnix
-- JupyterHub
-  - GenericOAuthenticator
-  - DockerSpawner
+## Goals
+
+- Test a setup that uses `https` when logging into Keycloak
+- Redirect requests from JupyterHub to Keyclaok using the GenericOAuthenticator when navigating to the JupyterHub
+- Validate a working version of Keycloak as a SAML SP and use a third party SAML IdP to complete the login flow
 
 ## Requirements
+
+For docker-compose based setup:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - [Auth0](https://auth0.com) (Supports free trials)
 - [Ngrok](https://ngrok.io/downloads) (Free for basic version)
 
-## Overview
+For Kubernetes-based setup:
+
+- Kubernetes cluster with version 1.18+
+- `kubectl` client
+
+> **NOTE**: refer to README in the kubernetes folder for the kubernetes POC instructions.
+## Docker-Compose POC
 
 This setup has two versions of Docker Compose:
 
@@ -36,20 +42,21 @@ Use the dev version to quickly test different configuration options. Use the def
 3. Start:
 
 ```bash
-docker-compose up -d`
+docker-compose up -d
 ```
+
 ### Dev Setup
 
 1. Build:
 
 ```bash
-docker-compose build --no-cache -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml build --no-cache
 ```
 
 2. Start:
 
 ```bash
-docker-compose up -d -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml up -d
 ```
 
 3. (Optional) Edit configuration files and restart service (container)
@@ -57,13 +64,13 @@ docker-compose up -d -f docker-compose-dev.yaml
 - Edit the `nginx/nginx.conf` configuration file to update Nginx's configuration. Then restart the `nginx` container with:
 
 ```bash
-docker-compose restart nginx -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml restart nginx
 ```
 
 - Edit the `jupyterhub/jupyterhub_config.py` configuration file to update JupyterHub's configuration. Then restart the `jupyterhub` container with:
 
 ```bash
-docker-compose restart jupyterhub -f docker-compose-dev.yaml
+docker-compose -f docker-compose-dev.yaml restart jupyterhub
 ```
 
 ### Public Access with Ngrok
