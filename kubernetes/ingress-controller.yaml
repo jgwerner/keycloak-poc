@@ -38,11 +38,20 @@ metadata:
 data:
   http-snippet: |
     server {
-      listen 2443;
+      listen 2443 proxy_protocol;
+      server_tokens off;
       return 308 https://$host$request_uri;
     }
-  proxy-real-ip-cidr: 0.0.0.0/0
-  use-forwarded-headers: 'true'
+  # ssl-redirect: "false"
+  # server-tokens: "true"
+  real-proxy-ip-cidr: 192.168.0.0/16
+  # proxy-real-ip-cidr: 192.168.0.0/16
+  use-forwarded-headers: "true"
+  compute-full-forwarded-for: "true"
+  allow-backend-server-header: "true"
+  # use-http2: 'true'
+  # plugins: "forwarded-proto-port"
+  hsts: "false"
 ---
 # Source: ingress-nginx/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -270,12 +279,12 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: 'http'
-    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '60'
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+    #service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+    service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: "60"
     service.beta.kubernetes.io/aws-load-balancer-cross-zone-load-balancing-enabled: 'true'
-    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: 'arn:aws:acm:us-west-2:860100747351:certificate/b6649826-1c12-4527-b82b-36968791b482'
-    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: 'https'
-    service.beta.kubernetes.io/aws-load-balancer-type: 'nlb'
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-2:860100747351:certificate/834fc25f-3c6c-42ea-b21c-49349b657b83"
   labels:
     helm.sh/chart: ingress-nginx-3.23.0
     app.kubernetes.io/name: ingress-nginx
@@ -296,7 +305,7 @@ spec:
     - name: https
       port: 443
       protocol: TCP
-      targetPort: https
+      targetPort: http
   selector:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
@@ -333,8 +342,9 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: controller
-          image: illumidesk/nginx:latest
-          imagePullPolicy: IfNotPresent
+          image: k8s.gcr.io/ingress-nginx/controller:v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a
+          # image: jgwerner/nginx:latest
+          imagePullPolicy: Always
           lifecycle:
             preStop:
               exec:
@@ -349,6 +359,9 @@ spec:
             - --validating-webhook=:8443
             - --validating-webhook-certificate=/usr/local/certificates/cert
             - --validating-webhook-key=/usr/local/certificates/key
+            # - --enable-ssl-passthrough
+            #- --enable-security-filter=true  # is required for the https redirect
+            #- --enable-https-redirection
           securityContext:
             capabilities:
               drop:

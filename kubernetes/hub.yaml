@@ -1,0 +1,65 @@
+hub:
+  image:
+    pullPolicy: Always
+    name: illumidesk/jupyterhub
+    tag: "2.0.1"
+  config:
+    GenericOAuthenticator:
+      auto_login: true
+      enable_auth_state: true
+      admin_users:
+        - foo
+        - admin
+      login_service: keycloak
+      client_id: illumidesk-hub
+      client_secret: 6a594d0f-59aa-46cf-8e6d-0672d500923b
+      oauth_callback_url: https://test2.illumidesk.com/jupyter/hub/oauth_callback
+      authorize_url: https://test2.illumidesk.com/auth/realms/illumidesk/protocol/openid-connect/auth
+      token_url: http://keycloak:8080/auth/realms/illumidesk/protocol/openid-connect/token
+      userdata_url: https://keycloak:8080/auth/realms/illumidesk/protocol/openid-connect/userinfo
+      username_key: preferred_username
+      userdata_params:
+        state: state
+      userdata_method: 'GET'
+      scope:
+        - openid
+      redirectToServer: true
+    JupyterHub:
+      #authenticator_class: generic-oauth
+      tornado_settings:
+        headers:
+          Content-Security-Policy: "frame-ancestors 'self' *"
+        cookie_options:
+          SameSite: "None"
+          Secure: "True"
+      tls_verify: false
+  singleuser:
+    image:
+      name: jupyter/base-notebook
+      tag: latest
+    # storage:
+      # type: "static"
+      # static:
+      #   pvcName: "efs-persist"
+      #   subPath: 'home/{username}'
+    extraEnv:
+      CHOWN_HOME: 'yes'
+    uid: 1000
+    fsGid: 1000
+    cmd: "start-singleuser.sh"
+  baseUrl: /jupyter
+  # service:
+  #   type: ClusterIP
+  extraEnv:
+    # required with enable_auth_state = true.
+    JUPYTERHUB_CRYPT_KEY: "8fbcb011ea01333be5ec09bedba50c986bcc62000022926a475e8c1657a0649b"
+  extraConfig:
+    # logoConfig: |
+    #   c.JupyterHub.logo_file = '/usr/local/share/jupyterhub/static/images/illumidesk-80.png'
+proxy:
+  secretToken: "7b2204c6386c563412ae761bb73b83ecb3776e122d41c096c78f58b44970ebb1"
+  service:
+    type: ClusterIP
+
+debug:
+  enabled: true
